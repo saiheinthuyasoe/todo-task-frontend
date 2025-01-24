@@ -1,32 +1,58 @@
-import { FaStar, FaCheckCircle, FaRegCircle, FaTrashAlt, FaEdit } from 'react-icons/fa';
-import { useState } from 'react';
+// src/app/components/TaskCard.tsx
+
+import {
+  FaStar,
+  FaCheckCircle,
+  FaRegCircle,
+  FaTrashAlt,
+  FaEdit,
+} from "react-icons/fa";
+import { useState } from "react";
+import { Task } from "../../types/task"; // Import the task interface
 
 interface TaskCardProps {
-  task: { id: number; title: string; description: string; completed: boolean; starred: boolean };
+  task: Task; // Use the imported task interface
   onToggleStar: (id: number) => void;
   onToggleComplete: (id: number) => void;
   onDelete: (id: number) => void;
   onEdit: (id: number, title: string, description?: string) => void;
 }
 
-const TaskCard = ({ task, onToggleStar, onToggleComplete, onDelete, onEdit }: TaskCardProps) => {
+const TaskCard = ({
+  task,
+  onToggleStar,
+  onToggleComplete,
+  onDelete,
+  onEdit,
+}: TaskCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(task.title);
   const [newDescription, setNewDescription] = useState(task.description);
 
   const handleEditClick = () => {
-    setIsEditing(true); // Switch to edit mode
+    setIsEditing(true);
   };
 
   const handleSave = () => {
-    onEdit(task.id, newTitle, newDescription); // Trigger onEdit function with the new values
-    setIsEditing(false); // Switch back to normal mode
+    onEdit(task.id, newTitle, newDescription);
+    setIsEditing(false);
   };
 
   const handleCancel = () => {
-    setNewTitle(task.title); // Reset the title back to original if cancelled
-    setNewDescription(task.description); // Reset the description back to original if cancelled
-    setIsEditing(false); // Exit edit mode
+    setNewTitle(task.title);
+    setNewDescription(task.description);
+    setIsEditing(false);
+  };
+
+  const formatDate = (isoString: string) => {
+    const date = new Date(isoString);
+    return date.toLocaleString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   return (
@@ -37,7 +63,9 @@ const TaskCard = ({ task, onToggleStar, onToggleComplete, onDelete, onEdit }: Ta
           <button
             onClick={() => onToggleComplete(task.id)}
             className={`p-3 rounded-full ${
-              task.completed ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-600'
+              task.completed
+                ? "bg-green-500 text-white"
+                : "bg-gray-200 text-gray-600"
             }`}
             title="Toggle Complete"
           >
@@ -54,14 +82,14 @@ const TaskCard = ({ task, onToggleStar, onToggleComplete, onDelete, onEdit }: Ta
                   onChange={(e) => setNewTitle(e.target.value)}
                   className="text-lg font-bold p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                   autoFocus
-                  title='Task Title'
+                  title="Task Title"
                 />
                 <textarea
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
                   className="text-sm p-2 border rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-green-500"
                   rows={3}
-                  title='Task'
+                  title="Task Description"
                 />
               </>
             ) : (
@@ -69,16 +97,18 @@ const TaskCard = ({ task, onToggleStar, onToggleComplete, onDelete, onEdit }: Ta
               <>
                 <h3
                   className={`text-lg font-bold ${
-                    task.completed ? 'line-through text-gray-500' : 'text-gray-800'
+                    task.completed
+                      ? "line-through text-gray-500"
+                      : "text-gray-800"
                   }`}
-                  style={{ wordBreak: 'break-word' }}
+                  style={{ wordBreak: "break-word" }}
                   title={task.title}
                 >
                   {task.title}
                 </h3>
                 <p
                   className="text-sm text-gray-600"
-                  style={{ wordBreak: 'break-word' }}
+                  style={{ wordBreak: "break-word" }}
                   title={task.description}
                 >
                   {task.description}
@@ -87,6 +117,12 @@ const TaskCard = ({ task, onToggleStar, onToggleComplete, onDelete, onEdit }: Ta
             )}
           </div>
         </div>
+
+        {/* Dates */}
+        <div className="text-xs text-gray-400 mt-2">
+          <p>Created: {formatDate(task.createdAt)}</p>
+          <p>Last Updated: {formatDate(task.updatedAt)}</p>
+        </div>
       </div>
 
       <div className="flex items-center gap-4 flex-wrap">
@@ -94,7 +130,7 @@ const TaskCard = ({ task, onToggleStar, onToggleComplete, onDelete, onEdit }: Ta
         <button
           onClick={() => onToggleStar(task.id)}
           className={`p-3 rounded-full ${
-            task.starred ? 'text-yellow-500' : 'text-gray-400'
+            task.starred ? "text-yellow-500" : "text-gray-400"
           } hover:text-yellow-600`}
           title="Toggle Star"
         >
